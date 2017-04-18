@@ -1,5 +1,6 @@
 #include <cmath>
 #include <iostream>
+#include <vector>
 #include <GL/gl.h>
 #include <SDL.h>
 
@@ -72,30 +73,81 @@ struct Vertex
 	Vertex(Vertex const &) = default;
 	Vertex(double u, double v, double w) : x(u), y(v), z(w) {}
 };
-/*
-Vertex operator+ (Vertex const &a, Vertex const &b)
-{
-	return {a.x + b.x, a.y + b.y, a.z + b.z};
-}
-*/
-long const N = 40;
-Vertex points[2 * N + 1][2 * N + 1];
-Vertex points2[2 * N + 1][2 * N + 1];
 
-void initPoints()
+class Graph
 {
-	double s = 2.5;
-	double d = s / N;
-	for (int i = -N; i <= N; ++i) {
-		double u = d * i;
-		for (int j = -N; j <= N; ++j) {
-			double v = d * j;
+private:
+	std::vector<Vertex> data;
+	int size;
+	int nn;
+	Vertex &get(int i, int j);
+	GLfloat *vx(int i, int j);
+
+public:
+	void fill(double r, int N, double f(double, double));
+	void drawG();
+	void drawQ();
+};
+
+Vertex &Graph::get(int i, int j)
+{
+	return data[nn * j + i];
+}
+
+GLfloat *Graph::vx(int i, int j)
+{
+	return (GLfloat *)&get(i, j);
+}
+
+void Graph::fill(double r, int N, double f(double, double))
+{
+	size = N;
+	nn = 2 * N + 1;
+	data = std::vector<Vertex>(nn * nn);
+	double d = r / N;
+	for (int i = 0; i < nn; ++i) {
+		double u = d * (i - N);
+		for (int j = 0; j < nn; ++j) {
+			double v = d * (j - N);
 			double w = fn(u, v);
-			points[N + i][N + j] = Vertex(u/s, w/s, v/s);
-			points2[N + i][N + j] = Vertex(u/s, w/s + 1e-3, v/s);
+			get(i, j) = Vertex(u/r, w/r, v/r);
 		}
 	}
 }
+
+void Graph::drawG()
+{
+	for (int i = 0; i < nn; ++i) {
+		glBegin(GL_LINE_STRIP);
+		for (int j = 0; j < nn; ++j) {
+			glVertex3fv(vx(i, j));
+		}
+		glEnd();
+	}
+	for (int j = 0; j < nn; ++j) {
+		glBegin(GL_LINE_STRIP);
+		for (int i = 0; i < nn; ++i) {
+			glVertex3fv(vx(i, j));
+		}
+		glEnd();
+	}
+}
+
+void Graph::drawQ()
+{
+	glBegin(GL_QUADS);
+	for (int i = 0; i < 2 * size; ++i) {
+		for (int j = 0; j < 2 * size; ++j) {
+			glVertex3fv(vx(i, j));
+			glVertex3fv(vx(i + 1, j));
+			glVertex3fv(vx(i + 1, j + 1));
+			glVertex3fv(vx(i, j + 1));
+		}
+	}
+	glEnd();
+}
+
+Graph g;
 
 void graph()
 {
@@ -103,31 +155,10 @@ void graph()
 	glRotatef(30.0, 1.0, 0.0, 0.0);
 	glRotatef(90.0 * t, 0.0, 1.0, 0.0);
 	glColor4f(0.2, 0.2, 0.2, 1.0);
-	glBegin(GL_QUADS);
-	for (int i = 0; i < 2 * N; ++i) {
-		for (int j = 0; j < 2 * N; ++j) {
-			glVertex3fv((GLfloat*)&points[i][j]);
-			glVertex3fv((GLfloat*)&points[i+1][j]);
-			glVertex3fv((GLfloat*)&points[i+1][j+1]);
-			glVertex3fv((GLfloat*)&points[i][j+1]);
-		}
-	}
-	glEnd();
+	g.drawQ();
+	glTranslatef(0.0, 1e-3, 0.0);
 	glColor4f(0.0, 1.0, 0.0, 0.7);
-	for (int i = 0; i <= 2 * N; ++i) {
-		glBegin(GL_LINE_STRIP);
-		for (int j = 0; j <= 2 * N; ++j) {
-			glVertex3fv((GLfloat*)&points2[i][j]);
-		}
-		glEnd();
-	}
-	for (int j = 0; j <= 2 * N; ++j) {
-		glBegin(GL_LINE_STRIP);
-		for (int i = 0; i <= 2 * N; ++i) {
-			glVertex3fv((GLfloat*)&points2[i][j]);
-		}
-		glEnd();
-	}
+	g.drawG();
 	glPopMatrix();
 }
 
@@ -193,7 +224,7 @@ int main(int argc, char **argv)
 	);
 	ctx = SDL_GL_CreateContext(win);
 	SDL_GL_MakeCurrent(win, ctx);
-	initPoints();
+	g.fill(2.5, 40, fn);
 	for (;;) {
 		if (!processEvents())
 			break;
