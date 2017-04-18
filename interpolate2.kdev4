@@ -1,0 +1,4 @@
+[Project]
+Name=interpolate2
+Manager=KDevCMakeManager
+VersionControl=kdevgit
