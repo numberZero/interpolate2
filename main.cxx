@@ -190,8 +190,9 @@ bool processEvents()
 void init_graph()
 {
 	FunctionData fd = make_fdata(2.5, 10, fn);
+	BilinearInterpolator bil(fd);
 	make_surface(b, fd);
-	make_interpolated(g, fd, 4);
+	make_surface(g, 1.0, 50, bil);
 }
 
 int main(int argc, char **argv)

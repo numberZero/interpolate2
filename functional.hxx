@@ -5,7 +5,7 @@
 
 struct FunctionData
 {
-private:
+protected:
 	std::vector<double> xx;
 	std::vector<double> yy;
 	std::vector<double> ff;
