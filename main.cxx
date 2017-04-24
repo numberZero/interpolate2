@@ -123,7 +123,7 @@ void graph()
 	glPushMatrix();
 	glRotatef(30.0, 1.0, 0.0, 0.0);
 	glRotatef(30.0 * t, 0.0, 1.0, 0.0);
-	glColor4f(0.0, 0.0, 0.4, 1.0);
+	glColor4f(0.0, 0.0, 0.4, 0.01);
 	g.drawQ();
 	glTranslatef(0.0, 1e-3, 0.0);
 	glColor4f(0.0, 1.0, 0.0, 0.3);
@@ -187,6 +187,13 @@ bool processEvents()
 	return true;
 }
 
+void init_graph()
+{
+	FunctionData fd = make_fdata(2.5, 10, fn);
+	make_surface(b, fd);
+	make_interpolated(g, fd, 4);
+}
+
 int main(int argc, char **argv)
 {
 	SDL_Init(SDL_INIT_EVERYTHING);
@@ -200,8 +207,7 @@ int main(int argc, char **argv)
 	);
 	ctx = SDL_GL_CreateContext(win);
 	SDL_GL_MakeCurrent(win, ctx);
-	make_surface(b, 2.5, 10, fn);
-	make_interpolated(g, b, 4);
+	init_graph();
 	for (;;) {
 		if (!processEvents())
 			break;
