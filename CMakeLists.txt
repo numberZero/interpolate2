@@ -8,6 +8,7 @@ add_executable(interpolate2
 	functional.cxx
 	interpolate.cxx
 	main.cxx
+	surface.cxx
 )
 
 target_include_directories(interpolate2 PUBLIC

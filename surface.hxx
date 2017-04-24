@@ -1,6 +1,7 @@
 #pragma once
 #include <vector>
 #include <GL/gl.h>
+#include "functional.hxx"
 
 struct Vertex
 {
@@ -16,6 +17,7 @@ struct Surface
 	std::vector<Vertex> data;
 	int points_i;
 	int points_j;
+	void create(FunctionData const &input);
 	void resize(int cuts_i, int cuts_j);
 	Vertex const &get(int i, int j) const;
 	Vertex &get(int i, int j);

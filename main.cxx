@@ -191,11 +191,11 @@ bool processEvents()
 
 void init_graph()
 {
-	FunctionData fd = make_fdata(r, 10, fn);
+	FunctionData fd(-r, r, -r, r, 20, 20, fn);
 	BilinearInterpolator bil(fd);
-	FunctionData fd2 = make_fdata(r, 50, bil);
-	make_surface(b, fd);
-	make_surface(g, fd2);
+	FunctionData fd2(-r, r, -r, r, 100, 100, bil);
+	b.create(fd);
+	g.create(fd2);
 }
 
 int main(int argc, char **argv)
