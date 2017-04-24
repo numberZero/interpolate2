@@ -40,8 +40,7 @@ void make_surface(Surface &output, FunctionData const &input)
 
 FunctionData make_fdata(double r, int N, std::function<double(double, double)> f)
 {
-	auto f_scaled = [r,&f] (double x, double y) { return f(x * r, y * r) / r;};
-	return FunctionData(-1.0, 1.0, -1.0, 1.0, 2 * N, 2 * N, f_scaled);
+	return FunctionData(-r, r, -r, r, 2 * N, 2 * N, f);
 }
 
 void make_interpolated(Surface &output, FunctionData const &input, int steps)

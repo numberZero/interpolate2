@@ -10,6 +10,7 @@ SDL_Window *win;
 SDL_GLContext ctx;
 double t;
 int w = 800, h = 600;
+double const r = 2.5;
 
 void cv(int x, int y,int z)
 {
@@ -121,6 +122,7 @@ Graph b, g;
 void graph()
 {
 	glPushMatrix();
+	glScalef(1.0 / r, 1.0 / r, 1.0 / r);
 	glRotatef(30.0, 1.0, 0.0, 0.0);
 	glRotatef(30.0 * t, 0.0, 1.0, 0.0);
 	glColor4f(0.0, 0.0, 0.4, 0.01);
@@ -189,10 +191,11 @@ bool processEvents()
 
 void init_graph()
 {
-	FunctionData fd = make_fdata(2.5, 10, fn);
+	FunctionData fd = make_fdata(r, 10, fn);
 	BilinearInterpolator bil(fd);
+	FunctionData fd2 = make_fdata(r, 50, bil);
 	make_surface(b, fd);
-	make_surface(g, 1.0, 50, bil);
+	make_surface(g, fd2);
 }
 
 int main(int argc, char **argv)
