@@ -3,6 +3,7 @@
 #include <vector>
 #include <GL/gl.h>
 #include <SDL.h>
+#include "surface.hxx"
 
 SDL_Window *win;
 SDL_GLContext ctx;
@@ -65,45 +66,17 @@ double fn(double u, double v)
 	return std::exp(-0.5 * (sqr(u) + sqr(v) + sqr(std::sin(2.0 * (u * u + v * v)))));
 }
 
-struct Vertex
+class Graph: private Surface
 {
-	GLfloat x = 0, y = 0, z = 0;
-
-	Vertex() = default;
-	Vertex(Vertex const &) = default;
-	Vertex(double u, double v, double w) : x(u), y(v), z(w) {}
-};
-
-class Graph
-{
-private:
-	std::vector<Vertex> data;
-	int size;
-	int nn;
-	Vertex &get(int i, int j);
-	GLfloat *vx(int i, int j);
-
 public:
 	void fill(double r, int N, double f(double, double));
 	void drawG();
 	void drawQ();
 };
 
-Vertex &Graph::get(int i, int j)
-{
-	return data[nn * j + i];
-}
-
-GLfloat *Graph::vx(int i, int j)
-{
-	return (GLfloat *)&get(i, j);
-}
-
 void Graph::fill(double r, int N, double f(double, double))
 {
-	size = N;
-	nn = 2 * N + 1;
-	data = std::vector<Vertex>(nn * nn);
+	resize(N);
 	double d = r / N;
 	for (int i = 0; i < nn; ++i) {
 		double u = d * (i - N);
