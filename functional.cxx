@@ -30,6 +30,17 @@ void FunctionData::init(std::vector<double> &&x, std::vector<double> &&y, std::f
 			ff[n++] = f(xx[i], yy[j]); // n == size_x() * j + i
 }
 
+double FunctionData::range() const
+{
+	double r = 0.0;
+	for (double z: ff) {
+		double v = std::abs(z);
+		if (v > r)
+			r = v;
+	}
+	return r;
+}
+
 std::vector<double> make_uniform_points(double x1, double x2, int N_cuts)
 {
 	std::vector<double> points;

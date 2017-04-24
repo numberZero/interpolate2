@@ -2,7 +2,8 @@
 #include <GL/gl.h>
 #include "surface.hxx"
 
-double scale;
+double scaleh;
+double scalev;
 double angle;
 
 Mode mode = Mode::Interpolated;
@@ -47,9 +48,9 @@ void visual_begin(int w, int h)
 void visual_draw()
 {
 	glPushMatrix();
-	glScalef(scale, scale, scale);
 	glRotatef(30.0, 1.0, 0.0, 0.0);
 	glRotatef(angle, 0.0, 1.0, 0.0);
+	glScalef(scaleh, scalev, scaleh);
 
 	switch(mode) {
 		case Mode::Original:

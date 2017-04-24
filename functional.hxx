@@ -18,6 +18,9 @@ public:
 	double get_x(int i) const;
 	double get_y(int j) const;
 	double get_f(int i, int j) const;
+	void set_f(int i, int j, double v);
+
+	double range() const;
 
 	FunctionData() = default;
 	FunctionData(FunctionData const &) = default;
@@ -56,4 +59,9 @@ inline double FunctionData::get_y(int j) const
 inline double FunctionData::get_f(int i, int j) const
 {
 	return ff[size_x() * j + i];
+}
+
+inline void FunctionData::set_f(int i, int j, double v)
+{
+	ff[size_x() * j + i] = v;
 }

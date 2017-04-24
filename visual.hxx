@@ -11,7 +11,8 @@ void visual_begin(int window_width, int window_height);
 void visual_end();
 void visual_draw();
 
-extern double scale;
+extern double scaleh;
+extern double scalev;
 extern double angle;
 extern Mode mode;
 
