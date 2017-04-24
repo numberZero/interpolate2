@@ -14,23 +14,21 @@ struct Vertex
 struct Surface
 {
 	std::vector<Vertex> data;
-	int size;
-	int nn;
-	void resize(int N);
+	int side_points;
+	void resize(int size);
 	Vertex &get(int i, int j);
 	GLfloat *vx(int i, int j);
 };
 
-inline void Surface::resize(int N)
+inline void Surface::resize(int size)
 {
-	size = N;
-	nn = 2 * N + 1;
-	data = std::vector<Vertex>(nn * nn);
+	side_points = size + 1;
+	data = std::vector<Vertex>(side_points * side_points);
 }
 
 inline Vertex &Surface::get(int i, int j)
 {
-	return data[nn * j + i];
+	return data[side_points * j + i];
 }
 
 inline GLfloat *Surface::vx(int i, int j)

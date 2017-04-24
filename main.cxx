@@ -77,11 +77,11 @@ public:
 
 void Graph::fill(double r, int N, double f(double, double))
 {
-	resize(N);
+	resize(2 * N);
 	double d = r / N;
-	for (int i = 0; i < nn; ++i) {
+	for (int i = 0; i < side_points; ++i) {
 		double u = d * (i - N);
-		for (int j = 0; j < nn; ++j) {
+		for (int j = 0; j < side_points; ++j) {
 			double v = d * (j - N);
 			double w = fn(u, v);
 			get(i, j) = Vertex(u/r, w/r, v/r);
@@ -92,24 +92,24 @@ void Graph::fill(double r, int N, double f(double, double))
 void Graph::drawP()
 {
 	glBegin(GL_POINTS);
-	for (int j = 0; j < nn; ++j)
-		for (int i = 0; i < nn; ++i)
+	for (int j = 0; j < side_points; ++j)
+		for (int i = 0; i < side_points; ++i)
 			glVertex3fv(vx(i, j));
 	glEnd();
 }
 
 void Graph::drawG()
 {
-	for (int i = 0; i < nn; ++i) {
+	for (int i = 0; i < side_points; ++i) {
 		glBegin(GL_LINE_STRIP);
-		for (int j = 0; j < nn; ++j) {
+		for (int j = 0; j < side_points; ++j) {
 			glVertex3fv(vx(i, j));
 		}
 		glEnd();
 	}
-	for (int j = 0; j < nn; ++j) {
+	for (int j = 0; j < side_points; ++j) {
 		glBegin(GL_LINE_STRIP);
-		for (int i = 0; i < nn; ++i) {
+		for (int i = 0; i < side_points; ++i) {
 			glVertex3fv(vx(i, j));
 		}
 		glEnd();
@@ -119,8 +119,8 @@ void Graph::drawG()
 void Graph::drawQ()
 {
 	glBegin(GL_QUADS);
-	for (int j = 0; j < 2 * size; ++j) {
-		for (int i = 0; i < 2 * size; ++i) {
+	for (int j = 0; j < side_points - 1; ++j) {
+		for (int i = 0; i < side_points - 1; ++i) {
 			glVertex3fv(vx(i, j));
 			glVertex3fv(vx(i + 1, j));
 			glVertex3fv(vx(i + 1, j + 1));
