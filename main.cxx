@@ -63,13 +63,14 @@ double sqr(double x)
 
 double fn(double u, double v)
 {
-	return std::exp(-0.5 * (sqr(u) + sqr(v) + sqr(std::sin(2.0 * (u * u + v * v)))));
+	return std::exp(-0.5 * (sqr(u) + sqr(v) + sqr(2.0 * std::cos(1.0 + 2.0 * u * u - v * v * v))));
 }
 
 class Graph: private Surface
 {
 public:
 	void fill(double r, int N, double f(double, double));
+	void drawP();
 	void drawG();
 	void drawQ();
 };
@@ -86,6 +87,15 @@ void Graph::fill(double r, int N, double f(double, double))
 			get(i, j) = Vertex(u/r, w/r, v/r);
 		}
 	}
+}
+
+void Graph::drawP()
+{
+	glBegin(GL_POINTS);
+	for (int j = 0; j < nn; ++j)
+		for (int i = 0; i < nn; ++i)
+			glVertex3fv(vx(i, j));
+	glEnd();
 }
 
 void Graph::drawG()
@@ -109,8 +119,8 @@ void Graph::drawG()
 void Graph::drawQ()
 {
 	glBegin(GL_QUADS);
-	for (int i = 0; i < 2 * size; ++i) {
-		for (int j = 0; j < 2 * size; ++j) {
+	for (int j = 0; j < 2 * size; ++j) {
+		for (int i = 0; i < 2 * size; ++i) {
 			glVertex3fv(vx(i, j));
 			glVertex3fv(vx(i + 1, j));
 			glVertex3fv(vx(i + 1, j + 1));
@@ -132,6 +142,9 @@ void graph()
 	glTranslatef(0.0, 1e-3, 0.0);
 	glColor4f(0.0, 1.0, 0.0, 0.7);
 	g.drawG();
+	glTranslatef(0.0, 1e-3, 0.0);
+	glColor4f(1.0, 0.0, 0.0, 1.0);
+	g.drawP();
 	glPopMatrix();
 }
 
@@ -156,9 +169,11 @@ void step()
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glEnable(GL_POINT_SMOOTH);
 	glEnable(GL_LINE_SMOOTH);
 	glDisable(GL_POLYGON_SMOOTH);
 
+	glPointSize(2.5);
 	glLineWidth(1.5);
 	glClearColor(0.05, 0.00, 0.25, 1.00);
 	glClearDepth(100.0);
