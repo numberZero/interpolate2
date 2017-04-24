@@ -68,56 +68,7 @@ double fn(double u, double v)
 	return std::exp(-0.5 * (sqr(u) + sqr(v) + sqr(2.0 * std::cos(1.0 + 2.0 * u * u - v * v * v))));
 }
 
-class Graph: public Surface
-{
-public:
-	void drawP();
-	void drawG();
-	void drawQ();
-};
-
-void Graph::drawP()
-{
-	glBegin(GL_POINTS);
-	for (int j = 0; j < points_j; ++j)
-		for (int i = 0; i < points_i; ++i)
-			glVertex3fv(vx(i, j));
-	glEnd();
-}
-
-void Graph::drawG()
-{
-	for (int i = 0; i < points_i; ++i) {
-		glBegin(GL_LINE_STRIP);
-		for (int j = 0; j < points_j; ++j) {
-			glVertex3fv(vx(i, j));
-		}
-		glEnd();
-	}
-	for (int j = 0; j < points_j; ++j) {
-		glBegin(GL_LINE_STRIP);
-		for (int i = 0; i < points_i; ++i) {
-			glVertex3fv(vx(i, j));
-		}
-		glEnd();
-	}
-}
-
-void Graph::drawQ()
-{
-	glBegin(GL_QUADS);
-	for (int j = 0; j < points_j - 1; ++j) {
-		for (int i = 0; i < points_i - 1; ++i) {
-			glVertex3fv(vx(i, j));
-			glVertex3fv(vx(i + 1, j));
-			glVertex3fv(vx(i + 1, j + 1));
-			glVertex3fv(vx(i, j + 1));
-		}
-	}
-	glEnd();
-}
-
-Graph b, g;
+Surface b, g;
 
 void graph()
 {
