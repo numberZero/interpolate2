@@ -10,7 +10,24 @@ SDL_Window *win;
 SDL_GLContext ctx;
 double t;
 int w = 800, h = 600;
+int N = 20;
 double const r = 2.5;
+double const dangle = 5.0;
+double const dscale = 1.15;
+double scale = 1.0 / r;
+double angle;
+bool rotating = true;
+Surface sbase;
+Surface sfunc;
+Surface sinterp;
+Surface serr;
+
+enum class Mode
+{
+	Original = 0,
+	Interpolated = 1,
+	Error = 2
+} mode = Mode::Interpolated;
 
 double sqr(double x)
 {
@@ -22,30 +39,45 @@ double fn(double u, double v)
 	return std::exp(-0.5 * (sqr(u) + sqr(v) + sqr(2.0 * std::cos(1.0 + 2.0 * u * u - v * v * v))));
 }
 
-Surface b, g;
+void init_graphs(int N = 20, int steps = 5);
 
 void graph()
 {
 	glPushMatrix();
-	glScalef(1.0 / r, 1.0 / r, 1.0 / r);
+	glScalef(scale, scale, scale);
 	glRotatef(30.0, 1.0, 0.0, 0.0);
-	glRotatef(30.0 * t, 0.0, 1.0, 0.0);
-	glColor4f(0.0, 0.0, 0.4, 0.01);
-	g.drawQ();
-	glTranslatef(0.0, 1e-3, 0.0);
-	glColor4f(0.0, 1.0, 0.0, 0.3);
-	g.drawG();
-	glTranslatef(0.0, 1e-3, 0.0);
-	glColor4f(0.0, 1.0, 0.0, 0.6);
-	b.drawG();
-	glColor4f(1.0, 0.0, 0.0, 1.0);
-	b.drawP();
+	glRotatef(angle, 0.0, 1.0, 0.0);
+
+	switch(mode) {
+		case Mode::Original:
+			sfunc.draw(0.0, 1.0, 1.0, 0.3);
+			break;
+
+		case Mode::Interpolated:
+			sinterp.draw(0.0, 1.0, 0.0, 0.3);
+
+			glTranslatef(0.0, 2.0e-3, 0.0);
+			glColor4f(0.0, 1.0, 0.0, 0.6);
+			sbase.drawG();
+			glColor4f(1.0, 0.0, 0.0, 1.0);
+			sbase.drawP();
+			break;
+
+		case Mode::Error:
+			serr.draw(1.0, 1.0, 0.0, 0.6);
+			break;
+	}
 	glPopMatrix();
 }
 
 void step()
 {
+	static double t_prev = 0.0;
 	t = 1e-3 * SDL_GetTicks();
+	double dt = t - t_prev;
+	if (rotating)
+		angle += 30.0 * dt;
+	t_prev = t;
 
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
@@ -88,18 +120,68 @@ bool processEvents()
 		if (e.type == SDL_WINDOWEVENT && e.window.event == SDL_WINDOWEVENT_SIZE_CHANGED) {
 			SDL_GetWindowSize(win, &w, &h);
 			glViewport(0, 0, w, h);
+			continue;
+		}
+		if (e.type == SDL_KEYDOWN) {
+			switch (e.key.keysym.scancode) {
+				case SDL_SCANCODE_1:
+					mode = Mode::Original;
+					break;
+				case SDL_SCANCODE_2:
+					mode = Mode::Interpolated;
+					break;
+				case SDL_SCANCODE_3:
+					mode = Mode::Error;
+					break;
+				case SDL_SCANCODE_M:
+					mode = Mode((int(mode) + 1) % 3);
+					break;
+				case SDL_SCANCODE_R:
+					rotating = !rotating;
+					break;
+				case SDL_SCANCODE_KP_PLUS:
+					scale *= dscale;
+					break;
+				case SDL_SCANCODE_KP_MINUS:
+					scale /= dscale;
+					break;
+				case SDL_SCANCODE_KP_MULTIPLY:
+					N *= 2;
+					init_graphs(N);
+					break;
+				case SDL_SCANCODE_KP_DIVIDE:
+					N /= 2;
+					init_graphs(N);
+					break;
+				case SDL_SCANCODE_KP_4:
+					angle -= dangle;
+					break;
+				case SDL_SCANCODE_KP_6:
+					angle += dangle;
+					break;
+				case SDL_SCANCODE_ESCAPE:
+					return false;
+				default:
+					break;
+			}
 		}
 	}
 	return true;
 }
 
-void init_graph()
+void init_graphs(int N, int steps)
 {
-	FunctionData fd(-r, r, -r, r, 20, 20, fn);
+	int M = steps * N;
+	FunctionData fd(-r, r, -r, r, N, N, fn);
 	BilinearInterpolator bil(fd);
-	FunctionData fd2(-r, r, -r, r, 100, 100, bil);
-	b.create(fd);
-	g.create(fd2);
+	auto err = [&](double x, double y) { return std::abs(bil(x, y) - fn(x, y)); };
+	FunctionData fd1(-r, r, -r, r, M, M, fn);
+	FunctionData fd2(-r, r, -r, r, M, M, bil);
+	FunctionData fde(-r, r, -r, r, M, M, err);
+	sbase.create(fd);
+	sfunc.create(fd1);
+	sinterp.create(fd2);
+	serr.create(fde);
 }
 
 int main(int argc, char **argv)
@@ -115,7 +197,7 @@ int main(int argc, char **argv)
 	);
 	ctx = SDL_GL_CreateContext(win);
 	SDL_GL_MakeCurrent(win, ctx);
-	init_graph();
+	init_graphs(N);
 	for (;;) {
 		if (!processEvents())
 			break;

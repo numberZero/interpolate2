@@ -29,6 +29,7 @@ public:
 	void drawP();
 	void drawG();
 	void drawQ();
+	void draw(double r, double g, double b, double a);
 };
 
 inline Vertex operator* (double m, Vertex const &v)

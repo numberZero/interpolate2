@@ -70,3 +70,13 @@ void Surface::drawQ()
 	}
 	glEnd();
 }
+
+void Surface::draw(double r, double g, double b, double a)
+{
+	glColor4f(0.0, 0.0, 0.0, 0.01);
+	drawQ();
+	glTranslatef(0.0, 1.0e-3, 0.0);
+	glColor4f(r, g, b, a);
+	drawG();
+	glTranslatef(0.0, -1.0e-3, 0.0);
+}
