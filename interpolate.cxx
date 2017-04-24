@@ -9,18 +9,10 @@ void make_surface(Surface& output, FunctionData const &input)
 			output.get(i, j) = Vertex(input.get_x(i), input.get_f(i, j), input.get_y(j));
 }
 
-void make_surface(Surface& output, double r, int N, double f(double, double))
+void make_surface(Surface& output, double r, int N, std::function<double(double, double)> f)
 {
-	output.resize(2 * N, 2 * N);
-	double d = r / N;
-	for (int i = 0; i < 2 * N + 1; ++i) {
-		double u = d * (i - N);
-		for (int j = 0; j < 2 * N + 1; ++j) {
-			double v = d * (j - N);
-			double w = f(u, v);
-			output.get(i, j) = Vertex(u / r, w / r, v / r);
-		}
-	}
+	auto f_scaled = [r,&f] (double x, double y) { return f(x * r, y * r) / r;};
+	make_surface(output, FunctionData(-1.0, 1.0, -1.0, 1.0, 2 * N, 2 * N, f_scaled));
 }
 
 void make_interpolated(Surface& output, const Surface& input, int steps)

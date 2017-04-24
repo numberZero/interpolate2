@@ -1,17 +1,17 @@
 #include "functional.hxx"
 #include <cmath>
 
-FunctionData::FunctionData(std::vector<double> const &x, std::vector<double> const &y, double f(double, double))
+FunctionData::FunctionData(std::vector<double> const &x, std::vector<double> const &y, std::function<double(double, double)> f)
 {
 	init(std::vector<double>(x), std::vector<double>(y), f);
 }
 
-FunctionData::FunctionData(std::vector<double> &&x, std::vector<double> &&y, double f(double, double))
+FunctionData::FunctionData(std::vector<double> &&x, std::vector<double> &&y, std::function<double(double, double)> f)
 {
 	init(std::move(x), std::move(y), f);
 }
 
-FunctionData::FunctionData(double x1, double x2, double y1, double y2, int x_cuts, int y_cuts, double f(double, double))
+FunctionData::FunctionData(double x1, double x2, double y1, double y2, int x_cuts, int y_cuts, std::function<double(double, double)> f)
 {
 	std::vector<double> xx = make_uniform_points(x1, x2, x_cuts);
 	std::vector<double> yy = make_uniform_points(y1, y2, y_cuts);
@@ -19,7 +19,7 @@ FunctionData::FunctionData(double x1, double x2, double y1, double y2, int x_cut
 
 }
 
-void FunctionData::init(std::vector<double> &&x, std::vector<double> &&y, double f(double, double))
+void FunctionData::init(std::vector<double> &&x, std::vector<double> &&y, std::function<double(double, double)> f)
 {
 	xx = std::move(x);
 	yy = std::move(y);

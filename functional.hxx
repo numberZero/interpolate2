@@ -1,4 +1,5 @@
 #pragma once
+#include <functional>
 #include <string>
 #include <vector>
 
@@ -9,7 +10,7 @@ private:
 	std::vector<double> yy;
 	std::vector<double> ff;
 
-	void init(std::vector<double> &&xx, std::vector<double> &&yy, double f(double x, double y));
+	void init(std::vector<double> &&xx, std::vector<double> &&yy, std::function<double(double, double)> f);
 
 public:
 	int size_x() const;
@@ -21,9 +22,9 @@ public:
 	FunctionData() = default;
 	FunctionData(FunctionData const &) = default;
 	FunctionData(FunctionData &&) = default;
-	FunctionData(std::vector<double> const &xx, std::vector<double> const &yy, double f(double x, double y));
-	FunctionData(std::vector<double> &&xx, std::vector<double> &&yy, double f(double x, double y));
-	FunctionData(double x1, double x2, double y1, double y2, int x_cuts, int y_cuts, double f(double x, double y));
+	FunctionData(std::vector<double> const &xx, std::vector<double> const &yy, std::function<double(double, double)> f);
+	FunctionData(std::vector<double> &&xx, std::vector<double> &&yy, std::function<double(double, double)> f);
+	FunctionData(double x1, double x2, double y1, double y2, int x_cuts, int y_cuts, std::function<double(double, double)> f);
 
 	FunctionData &operator= (FunctionData const &) = default;
 	FunctionData &operator= (FunctionData &&) = default;
