@@ -3,6 +3,7 @@
 #include <vector>
 #include <GL/gl.h>
 #include <SDL.h>
+#include "interpolate.hxx"
 #include "surface.hxx"
 
 SDL_Window *win;
@@ -66,28 +67,13 @@ double fn(double u, double v)
 	return std::exp(-0.5 * (sqr(u) + sqr(v) + sqr(2.0 * std::cos(1.0 + 2.0 * u * u - v * v * v))));
 }
 
-class Graph: private Surface
+class Graph: public Surface
 {
 public:
-	void fill(double r, int N, double f(double, double));
 	void drawP();
 	void drawG();
 	void drawQ();
 };
-
-void Graph::fill(double r, int N, double f(double, double))
-{
-	resize(2 * N);
-	double d = r / N;
-	for (int i = 0; i < side_points; ++i) {
-		double u = d * (i - N);
-		for (int j = 0; j < side_points; ++j) {
-			double v = d * (j - N);
-			double w = fn(u, v);
-			get(i, j) = Vertex(u/r, w/r, v/r);
-		}
-	}
-}
 
 void Graph::drawP()
 {
@@ -130,21 +116,23 @@ void Graph::drawQ()
 	glEnd();
 }
 
-Graph g;
+Graph b, g;
 
 void graph()
 {
 	glPushMatrix();
 	glRotatef(30.0, 1.0, 0.0, 0.0);
-	glRotatef(90.0 * t, 0.0, 1.0, 0.0);
-	glColor4f(0.2, 0.2, 0.2, 1.0);
+	glRotatef(30.0 * t, 0.0, 1.0, 0.0);
+	glColor4f(0.0, 0.0, 0.4, 1.0);
 	g.drawQ();
 	glTranslatef(0.0, 1e-3, 0.0);
-	glColor4f(0.0, 1.0, 0.0, 0.7);
+	glColor4f(0.0, 1.0, 0.0, 0.3);
 	g.drawG();
 	glTranslatef(0.0, 1e-3, 0.0);
+	glColor4f(0.0, 1.0, 0.0, 0.6);
+	b.drawG();
 	glColor4f(1.0, 0.0, 0.0, 1.0);
-	g.drawP();
+	b.drawP();
 	glPopMatrix();
 }
 
@@ -212,7 +200,8 @@ int main(int argc, char **argv)
 	);
 	ctx = SDL_GL_CreateContext(win);
 	SDL_GL_MakeCurrent(win, ctx);
-	g.fill(2.5, 40, fn);
+	make_surface(b, 2.5, 10, fn);
+	make_interpolated(g, b, 4);
 	for (;;) {
 		if (!processEvents())
 			break;

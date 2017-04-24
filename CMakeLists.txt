@@ -5,6 +5,7 @@ find_package(OpenGL)
 find_package(SDL2)
 
 add_executable(interpolate2
+	interpolate.cxx
 	main.cxx
 )
 
