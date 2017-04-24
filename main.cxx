@@ -12,52 +12,6 @@ double t;
 int w = 800, h = 600;
 double const r = 2.5;
 
-void cv(int x, int y,int z)
-{
-	glColor3f(x, y, z);
-	glVertex3f(x - 0.5, y - 0.5, z - 0.5);
-}
-
-void cube()
-{
-	glPushMatrix();
-	glRotatef(-30.0, 1.0, 0.0, 0.0);
-	glRotatef(45.0, 0.0, 0.0, 1.0);
-	glRotatef(90.0 * t, 1.0, 1.0, 1.0);
-	glBegin(GL_QUADS);
-	cv(0, 0, 0);
-	cv(1, 0, 0);
-	cv(1, 1, 0);
-	cv(0, 1, 0);
-
-	cv(0, 0,1);
-	cv(1, 0,1);
-	cv(1, 1,1);
-	cv(0, 1,1);
-
-	cv(0, 0, 0);
-	cv(1, 0, 0);
-	cv(1, 0, 1);
-	cv(0, 0, 1);
-
-	cv(0,1, 0);
-	cv(1,1, 0);
-	cv(1,1, 1);
-	cv(0,1, 1);
-
-	cv(0, 0, 0);
-	cv(0, 1, 0);
-	cv(0, 1, 1);
-	cv(0, 0, 1);
-
-	cv(1, 0, 0);
-	cv(1, 1, 0);
-	cv(1, 1, 1);
-	cv(1, 0, 1);
-	glEnd();
-	glPopMatrix();
-}
-
 double sqr(double x)
 {
 	return x * x;
@@ -120,7 +74,6 @@ void step()
 	glClearDepth(100.0);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-// 	cube();
 	graph();
 
 	SDL_GL_SwapWindow(win);
