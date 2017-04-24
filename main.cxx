@@ -78,24 +78,24 @@ public:
 void Graph::drawP()
 {
 	glBegin(GL_POINTS);
-	for (int j = 0; j < side_points; ++j)
-		for (int i = 0; i < side_points; ++i)
+	for (int j = 0; j < points_j; ++j)
+		for (int i = 0; i < points_i; ++i)
 			glVertex3fv(vx(i, j));
 	glEnd();
 }
 
 void Graph::drawG()
 {
-	for (int i = 0; i < side_points; ++i) {
+	for (int i = 0; i < points_i; ++i) {
 		glBegin(GL_LINE_STRIP);
-		for (int j = 0; j < side_points; ++j) {
+		for (int j = 0; j < points_j; ++j) {
 			glVertex3fv(vx(i, j));
 		}
 		glEnd();
 	}
-	for (int j = 0; j < side_points; ++j) {
+	for (int j = 0; j < points_j; ++j) {
 		glBegin(GL_LINE_STRIP);
-		for (int i = 0; i < side_points; ++i) {
+		for (int i = 0; i < points_i; ++i) {
 			glVertex3fv(vx(i, j));
 		}
 		glEnd();
@@ -105,8 +105,8 @@ void Graph::drawG()
 void Graph::drawQ()
 {
 	glBegin(GL_QUADS);
-	for (int j = 0; j < side_points - 1; ++j) {
-		for (int i = 0; i < side_points - 1; ++i) {
+	for (int j = 0; j < points_j - 1; ++j) {
+		for (int i = 0; i < points_i - 1; ++i) {
 			glVertex3fv(vx(i, j));
 			glVertex3fv(vx(i + 1, j));
 			glVertex3fv(vx(i + 1, j + 1));
