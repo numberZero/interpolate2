@@ -9,6 +9,8 @@ add_executable(interpolate2
 	interpolate.cxx
 	main.cxx
 	surface.cxx
+	user.cxx
+	visual.cxx
 )
 
 target_include_directories(interpolate2 PUBLIC
@@ -23,4 +25,5 @@ target_link_libraries(interpolate2 PUBLIC
 
 target_compile_options(interpolate2 PUBLIC
 	-std=c++11
+	-Wall -Wextra -pedantic
 )
