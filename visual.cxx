@@ -1,6 +1,8 @@
 #include "visual.hxx"
 #include <GL/gl.h>
+#include "main.hxx"
 #include "surface.hxx"
+#include "text.hxx"
 
 double scaleh;
 double scalev;
@@ -12,6 +14,7 @@ Surface sbase;
 Surface sfunc;
 Surface sinterp;
 Surface serr;
+double a, b;
 
 void visual_begin(int w, int h)
 {
@@ -19,7 +22,6 @@ void visual_begin(int w, int h)
 
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	double a, b;
 	if (w < h) {
 		a = 1.0;
 		b = 1.0 * h / w;
@@ -43,6 +45,19 @@ void visual_begin(int w, int h)
 	glClearColor(0.05, 0.00, 0.25, 1.00);
 	glClearDepth(100.0);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+}
+
+void visual_end()
+{
+	double x = 0.04 - a;
+	double y = b;
+	double s = 0.06;
+	double h = 0.08;
+	double t = 1.0;
+	glColor4f(1.0, 1.0, 1.0, 1.0);
+	glDisable(GL_DEPTH_TEST);
+	vglTextOutF(x, y -= h, s, t, "Value range: %.3f", range);
+	vglTextOutF(x, y -= h, s, t, "Max. error: %.3g (%.1f%%)", error, 100.0 * error / range);
 }
 
 void visual_draw()

@@ -16,6 +16,7 @@ static void step()
 	pre_step(t, dt);
 	visual_begin(w, h);
 	visual_draw();
+	visual_end();
 	SDL_GL_SwapWindow(win);
 }
 

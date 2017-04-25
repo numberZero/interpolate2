@@ -3,12 +3,14 @@ project(interpolate2)
 
 find_package(OpenGL)
 find_package(SDL2)
+find_package(GLUT)
 
 add_executable(interpolate2
 	functional.cxx
 	interpolate.cxx
 	main.cxx
 	surface.cxx
+	text.cxx
 	user.cxx
 	visual.cxx
 )
@@ -16,11 +18,13 @@ add_executable(interpolate2
 target_include_directories(interpolate2 PUBLIC
 	${OPENGL_INCLUDE_DIRS}
 	${SDL2_INCLUDE_DIRS}
+	${GLUT_INCLUDE_DIR}
 )
 
 target_link_libraries(interpolate2 PUBLIC
 	${OPENGL_LIBRARIES}
 	${SDL2_LIBRARIES}
+	${GLUT_glut_LIBRARY}
 )
 
 target_compile_options(interpolate2 PUBLIC

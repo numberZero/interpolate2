@@ -4,6 +4,7 @@
 #include <iostream>
 #include <random>
 #include <vector>
+#include <GL/glut.h>
 #include <SDL.h>
 #include "functional.hxx"
 #include "interpolate.hxx"
@@ -13,6 +14,7 @@
 
 int N = 20;
 double range = 1.0;
+double error = 0.0;
 int const steps = 5;
 double const r = 2.5;
 
@@ -42,6 +44,7 @@ void make_graphs()
 	auto err = [&](double x, double y) { return std::abs(bil(x, y) - fn(x, y)); };
 	FunctionData fd2(-r, r, -r, r, M, M, bil);
 	FunctionData fde(-r, r, -r, r, M, M, err);
+	error = fde.range();
 	sbase.create(fd);
 	sfunc.create(fd1);
 	sinterp.create(fd2);
@@ -131,8 +134,9 @@ void handle_key(int code)
 	}
 }
 
-int main()
+int main(int argc, char **argv)
 {
+	glutInit(&argc, argv);
 	gen.seed(std::time(nullptr));
 	scaleh = 1.0 / r;
 	user_init();
