@@ -4,10 +4,12 @@
 #include <iostream>
 #include <random>
 #include <vector>
+#ifdef HAVE_GLUT
 #include <GL/glut.h>
-#include <SDL.h>
+#endif
 #include "functional.hxx"
 #include "interpolate.hxx"
+#include "keys.hxx"
 #include "surface.hxx"
 #include "user.hxx"
 #include "visual.hxx"
@@ -83,51 +85,52 @@ void pre_step(double, double dt)
 
 void handle_key(int code)
 {
+	std::cout << "Key: " << code << std::endl;
 	switch (code) {
-		case SDL_SCANCODE_1:
+		case KEY_1:
 			mode = Mode::Original;
 			break;
-		case SDL_SCANCODE_2:
+		case KEY_2:
 			mode = Mode::Interpolated;
 			break;
-		case SDL_SCANCODE_3:
+		case KEY_3:
 			mode = Mode::Error;
 			break;
-		case SDL_SCANCODE_M:
+		case KEY_M:
 			mode = Mode((int(mode) + 1) % 3);
 			break;
-		case SDL_SCANCODE_R:
+		case KEY_R:
 			rotating = !rotating;
 			break;
-		case SDL_SCANCODE_D:
+		case KEY_D:
 			damage();
 			break;
-		case SDL_SCANCODE_E:
+		case KEY_E:
 			init_graphs();
 			break;
-		case SDL_SCANCODE_KP_PLUS:
+		case KEY_KP_PLUS:
 			scaleh *= dscale;
 			scalev *= dscale;
 			break;
-		case SDL_SCANCODE_KP_MINUS:
+		case KEY_KP_MINUS:
 			scaleh /= dscale;
 			scalev /= dscale;
 			break;
-		case SDL_SCANCODE_KP_MULTIPLY:
+		case KEY_KP_MULTIPLY:
 			N *= 2;
 			init_graphs();
 			break;
-		case SDL_SCANCODE_KP_DIVIDE:
+		case KEY_KP_DIVIDE:
 			N /= 2;
 			init_graphs();
 			break;
-		case SDL_SCANCODE_KP_4:
+		case KEY_KP_4:
 			angle -= dangle;
 			break;
-		case SDL_SCANCODE_KP_6:
+		case KEY_KP_6:
 			angle += dangle;
 			break;
-		case SDL_SCANCODE_ESCAPE:
+		case KEY_ESCAPE:
 			throw ExitException();
 		default:
 			break;
@@ -136,7 +139,9 @@ void handle_key(int code)
 
 int main(int argc, char **argv)
 {
+#ifdef HAVE_GLUT
 	glutInit(&argc, argv);
+#endif
 	gen.seed(std::time(nullptr));
 	scaleh = 1.0 / r;
 	user_init();
