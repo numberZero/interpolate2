@@ -22,7 +22,7 @@ Window win;
 GLXContext ctx;
 #endif
 
-int w = 800, h = 600;
+int win_width = 800, win_height = 600;
 
 static double get_time()
 {
@@ -38,7 +38,7 @@ static void step()
 	double dt = t - t_prev;
 	t_prev = t;
 	pre_step(t, dt);
-	visual_begin(w, h);
+	visual_begin(win_width, win_height);
 	visual_draw();
 	visual_end();
 #ifdef HAVE_SDL
@@ -70,8 +70,8 @@ static void processEvents()
 		if (e.type == Expose) {
 			XWindowAttributes attrs;
 			XGetWindowAttributes(display, win, &attrs);
-			w = attrs.width;
-			h = attrs.height;
+			win_width = attrs.width;
+			win_height = attrs.height;
 		}
 		if (e.type == KeyPress) {
 			if (e.xkey.keycode == 9)
@@ -111,7 +111,7 @@ void user_init()
 	XSetWindowAttributes swa;
 	swa.colormap = cmap;
 	swa.event_mask = ExposureMask | KeyPressMask;
-	win = XCreateWindow(display, root, 0, 0, w, h, 0, vi->depth, InputOutput, vi->visual, CWColormap | CWEventMask, &swa);
+	win = XCreateWindow(display, root, 0, 0, win_width, win_height, 0, vi->depth, InputOutput, vi->visual, CWColormap | CWEventMask, &swa);
 	Atom delWindow = XInternAtom(display, "WM_DELETE_WINDOW", 0 );
 	XSetWMProtocols(display, win, &delWindow, 1);
 	XMapWindow(display, win);
@@ -127,6 +127,10 @@ void user_close()
 	SDL_Quit();
 #endif
 #ifdef HAVE_X11
+	glXMakeCurrent(display, None, NULL);
+	glXDestroyContext(display, ctx);
+	XDestroyWindow(display, win);
+	XCloseDisplay(display);
 #endif
 }
 
